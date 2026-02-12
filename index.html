@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+    <title>GDPS FRIEND — Geometry Dash Private Server</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Font: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ========== ГЛОБАЛЬНЫЙ СТИЛЬ – КРАСНО-ЧЁРНЫЙ НЕОН ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0505;
+            --bg-card: #1a0f0f;
+            --bg-card-hover: #2a1a1a;
+            --red-primary: #ff4d4d;
+            --red-glow: #ff1a1a;
+            --red-soft: #ffb3b3;
+            --red-dark: #b30000;
+            --text-light: #fff0f0;
+            --text-dim: #d0b0b0;
+            --neon-shadow: 0 0 15px rgba(255, 77, 77, 0.5);
+            --neon-shadow-strong: 0 0 30px rgba(255, 26, 26, 0.7);
+            
+            /* Плавные кривые */
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 5% 15%, rgba(255, 77, 77, 0.03) 0%, transparent 25%),
+                radial-gradient(circle at 95% 75%, rgba(255, 77, 77, 0.03) 0%, transparent 30%),
+                radial-gradient(circle at 40% 90%, rgba(255, 77, 77, 0.02) 0%, transparent 40%);
+            overflow-x: hidden;
+            opacity: 0;
+            animation: fadeInBody 1.2s var(--ease-out-quart) forwards;
+        }
+
+        @keyframes fadeInBody {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 30px 25px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ========== ПЛАВНЫЙ ХЕДЕР ========== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 15px 0 25px;
+            border-bottom: 1px solid rgba(255, 77, 77, 0.2);
+            margin-bottom: 40px;
+            animation: slideDown 0.9s var(--ease-out-expo) forwards;
+        }
+
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 2.8rem;
+            color: var(--red-primary);
+            filter: drop-shadow(0 0 10px var(--red-glow));
+            transition: transform 0.6s var(--ease-out-back);
+        }
+
+        .logo:hover .logo-icon {
+            transform: rotate(8deg) scale(1.05);
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #ffd0d0, #ffb0b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.5s var(--ease-out-expo);
+            padding: 8px 18px;
+            border-radius: 40px;
+            background: rgba(255, 77, 77, 0.03);
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-links a:hover {
+            color: white;
+            background: rgba(255, 77, 77, 0.1);
+            border-color: var(--red-primary);
+            box-shadow: var(--neon-shadow);
+            transform: scale(1.02);
+        }
+
+        .nav-links a i {
+            color: var(--red-primary);
+            transition: transform 0.4s var(--ease-out-back);
+        }
+
+        .nav-links a:hover i {
+            transform: rotate(5deg) scale(1.1);
+        }
+
+        .nav-links a.active {
+            background: rgba(255, 77, 77, 0.15);
+            border-color: var(--red-primary);
+            color: white;
+        }
+
+        /* ========== HERO ========== */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 50px 20px 70px;
+            background: linear-gradient(145deg, rgba(26, 15, 15, 0.7), rgba(10, 5, 5, 0.9));
+            border-radius: 60px;
+            margin-bottom: 60px;
+            border: 1px solid rgba(255, 77, 77, 0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
+            animation: fadeScale 1s var(--ease-out-expo) forwards;
+        }
+
+        @keyframes fadeScale {
+            0% { opacity: 0; transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, #ffffff, #ffc0c0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 77, 77, 0.4);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: #e0c0c0;
+            max-width: 700px;
+            margin-bottom: 35px;
+        }
+
+        .btn-telegram {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(145deg, var(--red-primary), var(--red-dark));
+            color: #0a0505;
+            font-weight: 700;
+            font-size: 1.4rem;
+            padding: 18px 48px;
+            border-radius: 60px;
+            text-decoration: none;
+            box-shadow: 0 0 30px rgba(255, 77, 77, 0.5);
+            transition: all 0.6s var(--ease-out-back);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-telegram:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(255, 77, 77, 0.9);
+            background: linear-gradient(145deg, #ff6666, #cc0000);
+        }
+
+        .btn-telegram i {
+            transition: transform 0.5s var(--ease-out-back);
+        }
+
+        .btn-telegram:hover i {
+            transform: translateX(6px);
+        }
+
+        .btn-dashboard {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0,0,0,0.4);
+            color: white;
+            font-size: 1.1rem;
+            padding: 12px 32px;
+            border-radius: 60px;
+            text-decoration: none;
+            border: 1px solid var(--red-primary);
+            transition: all 0.5s var(--ease-out-expo);
+            margin-left: 15px;
+        }
+
+        .btn-dashboard:hover {
+            background: rgba(255,77,77,0.2);
+            border-color: var(--red-glow);
+            box-shadow: 0 0 20px rgba(255,77,77,0.5);
+        }
+
+        /* ========== СТАТУС СЕРВЕРА ========== */
+        .status-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 77, 77, 0.15);
+            border-radius: 32px;
+            padding: 30px 25px;
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto 70px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transition: all 0.5s var(--ease-out-expo);
+            opacity: 0;
+            animation: slideUp 0.9s 0.2s var(--ease-out-expo) forwards;
+        }
+
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--red-primary);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(255, 77, 77, 0.2);
+        }
+
+        .status-icon {
+            font-size: 2.8rem;
+            color: var(--red-primary);
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 8px var(--red-glow));
+            transition: transform 0.6s var(--ease-out-back);
+        }
+
+        .status-card:hover .status-icon {
+            transform: scale(1.1) rotate(3deg);
+        }
+
+        .status-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .status-text p {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            margin: 5px 0;
+        }
+
+        .online-badge {
+            display: inline-block;
+            margin-top: 20px;
+            background: rgba(255,77,77,0.1);
+            padding: 8px 25px;
+            border-radius: 60px;
+            border: 1px solid var(--red-primary);
+            color: var(--red-soft);
+            font-weight: 500;
+            transition: all 0.5s var(--ease-out-expo);
+        }
+
+        .status-card:hover .online-badge {
+            background: rgba(255,77,77,0.2);
+            border-color: var(--red-glow);
+            box-shadow: 0 0 15px rgba(255,77,77,0.4);
+        }
+
+        /* ========== ПЛАВНЫЕ ТАБЫ ========== */
+        .tab-pane {
+            display: none;
+            animation: fadeSlide 0.7s var(--ease-out-expo) forwards;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeSlide {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== ПРАВИЛА (КРАСНО-ЧЁРНЫЕ) ========== */
+        .rules-section {
+            margin: 60px 0;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 50px 0 20px;
+            position: relative;
+            display: inline-block;
+            opacity: 0;
+            animation: fadeInRight 0.8s var(--ease-out-quart) forwards;
+            color: var(--red-primary);
+            text-shadow: 0 0 10px var(--red-glow);
+        }
+
+        @keyframes fadeInRight {
+            0% { opacity: 0; transform: translateX(-20px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: var(--red-primary);
+            box-shadow: 0 0 15px var(--red-glow);
+            border-radius: 4px;
+            transition: width 0.5s var(--ease-out-expo);
+        }
+
+        .section-title:hover::after {
+            width: 120px;
+        }
+
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .rule-card {
+            background: rgba(26, 15, 15, 0.7);
+            border: 1px solid rgba(255, 77, 77, 0.2);
+            border-radius: 32px;
+            padding: 25px;
+            transition: all 0.6s var(--ease-out-expo);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            animation: cardAppear 0.7s var(--ease-out-quart) forwards;
+            animation-delay: calc(0.04s * var(--i, 0));
+        }
+
+        @keyframes cardAppear {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .rule-card:hover {
+            border-color: var(--red-primary);
+            box-shadow: 0 0 30px rgba(255, 77, 77, 0.25);
+            transform: translateY(-7px) scale(1.02);
+            background: rgba(42, 26, 26, 0.8);
+        }
+
+        .rule-icon {
+            font-size: 2.5rem;
+            color: var(--red-primary);
+            margin-bottom: 15px;
+            transition: transform 0.6s var(--ease-out-back);
+        }
+
+        .rule-card:hover .rule-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        .rule-card h3 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: white;
+            transition: color 0.4s ease;
+        }
+
+        .rule-card:hover h3 {
+            color: var(--red-soft);
+        }
+
+        .rule-card p {
+            color: var(--text-dim);
+            font-size: 1rem;
+            transition: color 0.4s ease;
+        }
+
+        .rule-card:hover p {
+            color: #e0c0c0;
+        }
+
+        .rule-note {
+            margin-top: 40px;
+            color: var(--red-soft);
+            font-style: italic;
+            border-top: 1px dashed var(--red-primary);
+            padding-top: 30px;
+            opacity: 0;
+            animation: fadeIn 0.8s 0.4s var(--ease-out-expo) forwards;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* ========== VPN ТУТОРИАЛ (КРАСНЫЙ СТИЛЬ) ========== */
+        .vpn-tutorial {
+            margin: 60px 0;
+        }
+
+        .vpn-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .vpn-header h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--red-primary);
+            text-shadow: 0 0 15px var(--red-glow);
+            margin-bottom: 10px;
+            opacity: 0;
+            animation: fadeInRight 0.8s var(--ease-out-quart) forwards;
+        }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .platform-card {
+            background: rgba(26, 15, 15, 0.7);
+            border: 1px solid rgba(255, 77, 77, 0.2);
+            border-radius: 32px;
+            padding: 25px;
+            transition: all 0.6s var(--ease-out-expo);
+            opacity: 0;
+            animation: cardAppear 0.7s var(--ease-out-quart) forwards;
+            animation-delay: calc(0.03s * var(--i, 0));
+        }
+
+        .platform-card:hover {
+            border-color: var(--red-primary);
+            box-shadow: 0 0 30px rgba(255, 77, 77, 0.25);
+            transform: translateY(-6px);
+        }
+
+        .platform-icon {
+            font-size: 2.5rem;
+            color: var(--red-primary);
+            margin-bottom: 15px;
+            transition: transform 0.6s var(--ease-out-back);
+        }
+
+        .platform-card:hover .platform-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .platform-card h3 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .step-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .step-list li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            transition: transform 0.3s var(--ease-out-expo), color 0.3s ease;
+        }
+
+        .platform-card:hover .step-list li {
+            color: #e0c0c0;
+        }
+
+        .step-list li i {
+            color: var(--red-primary);
+            margin-top: 3px;
+            transition: transform 0.4s var(--ease-out-back);
+        }
+
+        .step-list li:hover i {
+            transform: translateX(3px);
+        }
+
+        .bot-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .bot-tag {
+            background: rgba(255, 77, 77, 0.1);
+            border: 1px solid var(--red-primary);
+            border-radius: 40px;
+            padding: 6px 16px;
+            font-size: 0.9rem;
+            color: var(--red-soft);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.4s var(--ease-out-expo);
+        }
+
+        .bot-tag:hover {
+            background: rgba(255, 77, 77, 0.25);
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(255,77,77,0.4);
+        }
+
+        .tip-box {
+            background: rgba(255, 77, 77, 0.05);
+            border-left: 4px solid var(--red-primary);
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+            transition: all 0.5s var(--ease-out-expo);
+        }
+
+        .tip-box:hover {
+            background: rgba(255, 77, 77, 0.08);
+            border-left-width: 8px;
+        }
+
+        /* ========== TELEGRAM / DASHBOARD ========== */
+        .social-block {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 80px 0;
+        }
+
+        .tg-card, .dash-card {
+            background: linear-gradient(145deg, #1a0f0f, #0f0a0a);
+            border-radius: 40px;
+            padding: 35px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            border: 1px solid rgba(255, 77, 77, 0.3);
+            transition: all 0.6s var(--ease-out-expo);
+            opacity: 0;
+            animation: slideUp 0.9s 0.3s var(--ease-out-expo) forwards;
+        }
+
+        .tg-card:hover {
+            border-color: var(--red-primary);
+            box-shadow: 0 0 30px rgba(255, 77, 77, 0.25);
+            transform: translateY(-5px);
+        }
+
+        .dash-card:hover {
+            border-color: var(--red-primary);
+            box-shadow: 0 0 30px rgba(255, 77, 77, 0.25);
+            transform: translateY(-5px);
+        }
+
+        .tg-icon, .dash-icon {
+            font-size: 4rem;
+            color: #ff6666;
+            filter: drop-shadow(0 0 15px #ff4d4d);
+            transition: transform 0.6s var(--ease-out-back);
+        }
+
+        .tg-card:hover .tg-icon,
+        .dash-card:hover .dash-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .tg-content h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .tg-btn {
+            display: inline-block;
+            background: rgba(255, 77, 77, 0.15);
+            color: white;
+            padding: 12px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            margin-top: 15px;
+            border: 1px solid var(--red-primary);
+            transition: all 0.5s var(--ease-out-back);
+            font-weight: 600;
+        }
+
+        .tg-btn:hover {
+            background: var(--red-primary);
+            color: black;
+            box-shadow: 0 0 20px var(--red-primary);
+            transform: scale(1.02);
+        }
+
+        .dash-card {
+            background: rgba(26, 15, 15, 0.8);
+            border: 1px solid #b30000;
+        }
+
+        .dash-icon {
+            color: #ff8080;
+        }
+
+        /* ========== ВОДЯНКА ST VIN ========== */
+        .stvin-watermark {
+            text-align: center;
+            margin-top: 80px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 77, 77, 0.2);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            color: rgba(255, 77, 77, 0.7);
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.3);
+            font-weight: 400;
+            text-transform: uppercase;
+            word-spacing: 4px;
+            opacity: 0;
+            animation: fadeIn 1s 0.5s var(--ease-out-expo) forwards;
+        }
+
+        .stvin-watermark span {
+            font-weight: 700;
+            color: var(--red-primary);
+            text-shadow: 0 0 15px var(--red-glow);
+            transition: all 0.4s var(--ease-out-expo);
+        }
+
+        .stvin-watermark:hover span {
+            letter-spacing: 4px;
+            text-shadow: 0 0 25px var(--red-glow);
+        }
+
+        /* ========== ФУТЕР ========== */
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            color: #b0a0a0;
+            font-size: 0.9rem;
+            opacity: 0;
+            animation: fadeIn 0.8s 0.6s var(--ease-out-expo) forwards;
+        }
+
+        .footer a {
+            transition: color 0.4s var(--ease-out-expo), transform 0.4s var(--ease-out-back);
+            display: inline-block;
+            color: #d0b0b0;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: white;
+            transform: translateY(-2px);
+            text-shadow: 0 0 8px var(--red-primary);
+        }
+
+        /* ========== АДАПТАЦИЯ ========== */
+        @media (max-width: 800px) {
+            .hero h1 { font-size: 2.8rem; }
+            .social-block { grid-template-columns: 1fr; }
+            .section-title { font-size: 2rem; }
+            .btn-telegram { font-size: 1.2rem; padding: 16px 32px; }
+            .header { flex-direction: column; gap: 20px; }
+            .nav-links { justify-content: center; }
+            .vpn-header h2 { font-size: 2.2rem; }
+            .rules-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 500px) {
+            .container { padding: 20px 15px; }
+            .hero h1 { font-size: 2.2rem; }
+            .btn-telegram { font-size: 1.1rem; padding: 14px 28px; }
+            .tg-card, .dash-card { flex-direction: column; text-align: center; }
+            .vpn-header h2 { font-size: 1.8rem; }
+            .hero .btn-dashboard { margin-left: 0; margin-top: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <!-- ===== ХЕДЕР ===== -->
+        <div class="header">
+            <div class="logo">
+                <span class="logo-icon"><i class="fas fa-cube"></i></span>
+                <span class="logo-text">GDPS FRIEND</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="tab-nav-btn" data-tab="main"><i class="fas fa-home"></i> Главная</a>
+                <a href="#" class="tab-nav-btn" data-tab="rules"><i class="fas fa-gavel"></i> Правила</a>
+                <a href="#" class="tab-nav-btn" data-tab="vpn"><i class="fas fa-shield-haltered"></i> VPN</a>
+                <a href="https://t.me/friendgdps" target="_blank"><i class="fab fa-telegram"></i> Канал</a>
+            </div>
+        </div>
+
+        <!-- ===== ГЛАВНАЯ ===== -->
+        <div id="main-tab" class="tab-pane active">
+            <div class="hero">
+                <span style="font-size: 1.3rem; color: var(--red-soft); margin-bottom: 10px;">
+                    <i class="fas fa-bolt"></i> Geometry Dash Private Server
+                </span>
+                <h1>⚡ FRIEND·GDPS ⚡</h1>
+                <p>Приватный сервер для друзей и комьюнити. Уникальные уровни, иконки, экономика и кланы. Всё в Telegram.</p>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                    <a href="https://t.me/friendgdps" target="_blank" class="btn-telegram">
+                        <i class="fab fa-telegram-plane"></i> Скачать GDPS
+                        <span style="font-size: 0.9rem; opacity: 0.9;">TG</span>
+                    </a>
+                    <a href="https://friend.ps.fhgdps.com/dashboard/" target="_blank" class="btn-dashboard">
+                        <i class="fas fa-tachometer-alt"></i> Панель управления
+                    </a>
+                </div>
+                <div style="margin-top: 25px; color: var(--red-soft);">
+                    <span style="background: rgba(255,77,77,0.1); padding: 8px 20px; border-radius: 60px; border: 1px solid var(--red-primary);">
+                        🔥 2.2 • 150+ уровней • 80+ онлайн
+                    </span>
+                </div>
+            </div>
+
+            <!-- ===== СТАТУС СЕРВЕРА ===== -->
+            <div class="status-card">
+                <div class="status-icon"><i class="fas fa-server"></i></div>
+                <h3 class="status-title">📊 Статус сервера</h3>
+                <div class="status-text">
+                    <p><strong>Версия:</strong> GDPS 2.2</p>
+                    <p><strong>Uptime:</strong> 99.7%</p>
+                    <p><strong>Всего уровней:</strong> 150+</p>
+                    <p><strong>Игроков онлайн:</strong> 80+</p>
+                    <p><strong>TG подписчики:</strong> 30+</p>
+                </div>
+                <span class="online-badge"><i class="fas fa-circle"></i> Работает</span>
+            </div>
+        </div>
+
+        <!-- ===== ПРАВИЛА ===== -->
+        <div id="rules-tab" class="tab-pane">
+            <div class="rules-section">
+                <h2 class="section-title"><i class="fas fa-gavel" style="color: var(--red-primary);"></i> Правила сервера</h2>
+                <p style="color: var(--text-dim); font-size: 1.2rem; margin-top: 10px;">Кратко и по существу, как в Geometry Dash</p>
+                
+                <div class="rules-grid">
+                    <div class="rule-card" style="--i: 1;">
+                        <div class="rule-icon"><i class="fas fa-smile"></i></div>
+                        <h3>Уважение</h3>
+                        <p>Относись к другим игрокам с уважением. Никаких оскорблений, токсичности и травли.</p>
+                    </div>
+                    <div class="rule-card" style="--i: 2;">
+                        <div class="rule-icon"><i class="fas fa-ban"></i></div>
+                        <h3>Читерство</h3>
+                        <p>Запрещены читы, багоюзы, хаки и любые модификации, дающие преимущество. Только честная игра.</p>
+                    </div>
+                    <div class="rule-card" style="--i: 3;">
+                        <div class="rule-icon"><i class="fas fa-comment-slash"></i></div>
+                        <h3>Спам</h3>
+                        <p>Не спамь в чатах, комментариях, личных сообщениях. Реклама только с разрешения администрации.</p>
+                    </div>
+                    <div class="rule-card" style="--i: 4;">
+                        <div class="rule-icon"><i class="fas fa-paint-brush"></i></div>
+                        <h3>Уровни</h3>
+                        <p>Запрещены уровни с NSFW-контентом, оскорблениями, провокациями. Без обхода цензуры.</p>
+                    </div>
+                    <div class="rule-card" style="--i: 5;">
+                        <div class="rule-icon"><i class="fas fa-server"></i></div>
+                        <h3>VPN</h3>
+                        <p>Разрешён только для обхода блокировок. Не используй для дудосов или мультиаккаунтов.</p>
+                    </div>
+                    <div class="rule-card" style="--i: 6;">
+                        <div class="rule-icon"><i class="fas fa-balance-scale"></i></div>
+                        <h3>Администрация</h3>
+                        <p>Администратор вправе блокировать нарушителей без предупреждения. Решения обжалуются в Telegram.</p>
+                    </div>
+                </div>
+                <div class="rule-note">
+                    <i class="fas fa-info-circle"></i> Незнание правил не освобождает от ответственности. Играй честно — получай удовольствие!
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== VPN ТУТОРИАЛ (ПОЛНОСТЬЮ ПЕРЕКРАШЕН В КРАСНЫЙ) ===== -->
+        <div id="vpn-tab" class="tab-pane">
+            <div class="vpn-tutorial">
+                <div class="vpn-header">
+                    <h2><i class="fas fa-shield-haltered"></i> Настройка Happ VPN</h2>
+                    <p style="color: var(--text-dim); font-size: 1.2rem;">Подключайся к серверу без проблем — даже при блокировках</p>
+                </div>
+                <div class="platform-grid">
+                    <div class="platform-card" style="--i: 1;">
+                        <div class="platform-icon"><i class="fab fa-android"></i></div>
+                        <h3>Android</h3>
+                        <ul class="step-list">
+                            <li><i class="fas fa-download"></i> Скачай Happ из <a href="https://play.google.com/store/apps/details?id=com.happproxy" target="_blank" style="color: var(--red-primary);">Play Market</a> или <a href="https://github.com/Happ-proxy/happ-android/releases" target="_blank" style="color: var(--red-primary);">GitHub</a></li>
+                            <li><i class="fas fa-telegram"></i> Перейди в любого VPN-бота: <span style="color: var(--red-soft);">@CookieVPN_bot, @DurevVpnBot, @GuavaVPNBot</span></li>
+                            <li><i class="fas fa-copy"></i> Нажми «Скопировать ссылку» / «Ключ доступа»</li>
+                            <li><i class="fas fa-plus-circle"></i> В Happ → «+» → «Import from clipboard»</li>
+                            <li><i class="fas fa-play"></i> Выбери сервер и нажми кнопку подключения</li>
+                        </ul>
+                    </div>
+                    <div class="platform-card" style="--i: 2;">
+                        <div class="platform-icon"><i class="fab fa-apple"></i></div>
+                        <h3>iOS</h3>
+                        <ul class="step-list">
+                            <li><i class="fas fa-download"></i> Установи Happ из <a href="https://apps.apple.com/app/happ-proxy/id6502378156" target="_blank" style="color: var(--red-primary);">App Store</a></li>
+                            <li><i class="fas fa-telegram"></i> В Telegram-боте скопируй VLESS-ключ или ссылку</li>
+                            <li><i class="fas fa-plus-circle"></i> Happ → «+» → «Import from clipboard»</li>
+                            <li><i class="fas fa-qrcode"></i> Или отсканируй QR-код из бота</li>
+                            <li><i class="fas fa-shield"></i> Разреши добавление VPN-конфигурации</li>
+                        </ul>
+                    </div>
+                    <div class="platform-card" style="--i: 3;">
+                        <div class="platform-icon"><i class="fab fa-windows"></i></div>
+                        <h3>Windows</h3>
+                        <ul class="step-list">
+                            <li><i class="fas fa-download"></i> Скачай клиент с <a href="https://github.com/Happ-proxy/happ-desktop/releases" target="_blank" style="color: var(--red-primary);">GitHub Happ</a></li>
+                            <li><i class="fas fa-key"></i> Получи ключ в боте (раздел «Подписка»)</li>
+                            <li><i class="fas fa-paste"></i> Вставь ссылку в поле «Добавить сервер»</li>
+                            <li><i class="fas fa-plug"></i> Нажми «Get started» → «Подключиться»</li>
+                            <li><span style="color: #ffd966;">💡 Если не работает — включи TUN-режим в настройках</span></li>
+                        </ul>
+                    </div>
+                    <div class="platform-card" style="--i: 4;">
+                        <div class="platform-icon"><i class="fas fa-terminal"></i></div>
+                        <h3>macOS / Linux</h3>
+                        <ul class="step-list">
+                            <li><i class="fas fa-download"></i> macOS: Happ из App Store / Linux: <code style="background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 20px;">.AppImage</code> с GitHub</li>
+                            <li><i class="fas fa-copy"></i> Скопируй ссылку на подписку из профиля в Telegram-боте</li>
+                            <li><i class="fas fa-paste"></i> Вставь её в Happ → «Добавить сервер»</li>
+                            <li><i class="fas fa-check-circle"></i> Подключись к серверу с лучшим пингом</li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="margin-top: 40px; background: rgba(255, 77, 77, 0.03); border-radius: 40px; padding: 30px;">
+                    <h3 style="font-size: 1.8rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: var(--red-primary);">
+                        <i class="fas fa-robot" style="color: var(--red-primary);"></i> Где брать ключи / подписки?
+                    </h3>
+                    <div class="bot-list">
+                        <span class="bot-tag"><i class="fab fa-telegram"></i> @CookieVPN_bot</span>
+                        <span class="bot-tag"><i class="fab fa-telegram"></i> @DurevVpnBot</span>
+                        <span class="bot-tag"><i class="fab fa-telegram"></i> @GuavaVPNBot</span>
+                        <span class="bot-tag"><i class="fab fa-telegram"></i> @lvpn_bot</span>
+                        <span class="bot-tag"><i class="fab fa-telegram"></i> @EnotProxyBot</span>
+                        <span class="bot-tag"><i class="fab fa-telegram"></i> @VPNLeak_bot (проверка)</span>
+                    </div>
+                    <p style="color: var(--text-dim); margin-top: 20px;">
+                        <i class="fas fa-lightbulb" style="color: var(--red-primary);"></i> Также ищи ключи в Telegram-каналах: «Бесплатные ключи VLESS», «Vless VPN» и на GitHub.
+                    </p>
+                </div>
+                <div class="tip-box">
+                    <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                        <span style="font-size: 2.5rem;"><i class="fas fa-circle-info" style="color: var(--red-primary);"></i></span>
+                        <div>
+                            <h4 style="font-size: 1.4rem; color: white;">Быстрый старт за 1 минуту</h4>
+                            <p style="color: var(--text-dim);">Скачай Happ → зайди в @CookieVPN_bot → нажми «Скопировать ссылку» → вставь в Happ → подключись. Готово!</p>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 50px;">
+                    <p style="color: var(--text-dim);">❓ Если нужна помощь с настройкой — пиши в наш <a href="https://t.me/friendgdps" target="_blank" style="color: var(--red-primary); font-weight: 600;">Telegram-канал</a>, поможем!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TELEGRAM КАНАЛ И ПАНЕЛЬ УПРАВЛЕНИЯ ===== -->
+        <div class="social-block">
+            <div class="tg-card">
+                <span class="tg-icon"><i class="fab fa-telegram-plane"></i></span>
+                <div class="tg-content">
+                    <h3>🤝 GDPS FRIEND</h3>
+                    <p>Новости, обновления, уровни, общение в Telegram.</p>
+                    <a href="https://t.me/friendgdps" target="_blank" class="tg-btn">
+                        <i class="fab fa-telegram"></i> Перейти в канал
+                    </a>
+                    <span style="display: block; margin-top: 12px; color: #d0a0a0;">👥 30+ подписчиков</span>
+                </div>
+            </div>
+            <div class="dash-card">
+                <span class="dash-icon"><i class="fas fa-tachometer-alt"></i></span>
+                <div class="tg-content">
+                    <h3>📋 Панель GDPS</h3>
+                    <p>Управление сервером, статистика, загрузки.</p>
+                    <a href="https://friend.ps.fhgdps.com/dashboard/" target="_blank" class="tg-btn" style="background: rgba(255,77,77,0.1); border-color: #ff4d4d;">
+                        <i class="fas fa-cube"></i> Открыть дашборд
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ВОДЯНКА ST VIN ===== -->
+        <div class="stvin-watermark">
+            <span>✧ САЙТ ОТ ST VIN ✧</span> — дизайн, разработка, поддержка
+        </div>
+
+        <!-- ===== ФУТЕР ===== -->
+        <div class="footer">
+            <div>
+                <span style="font-size: 1.2rem; font-weight: 700; color: white;">🤝 GDPS FRIEND</span><br>
+                <span>© 2025 • Дружелюбный Geometry Dash Private Server</span>
+            </div>
+            <div style="display: flex; gap: 20px;">
+                <a href="https://t.me/friendgdps" target="_blank"><i class="fab fa-telegram"></i> Telegram</a>
+                <a href="https://friend.ps.fhgdps.com/dashboard/" target="_blank"><i class="fas fa-cube"></i> Дашборд</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== JS ДЛЯ ТАБОВ ===== -->
+    <script>
+        (function() {
+            console.log('🔥 GDPS FRIEND — красно-чёрный стиль, плавные анимации');
+
+            // Переключение табов
+            const tabBtns = document.querySelectorAll('.tab-nav-btn');
+            const panes = {
+                'main': document.getElementById('main-tab'),
+                'rules': document.getElementById('rules-tab'),
+                'vpn': document.getElementById('vpn-tab')
+            };
+
+            function activateTab(tabId) {
+                Object.values(panes).forEach(pane => {
+                    if (pane) pane.classList.remove('active');
+                });
+                if (panes[tabId]) panes[tabId].classList.add('active');
+                
+                tabBtns.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.tab === tabId) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const tabId = btn.dataset.tab;
+                    if (tabId) activateTab(tabId);
+                });
+            });
+
+            // По умолчанию главная
+            activateTab('main');
+        })();
+    </script>
+
+</body>
+</html>
